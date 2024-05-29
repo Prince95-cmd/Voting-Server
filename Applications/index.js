@@ -69,6 +69,26 @@ class Parties {
          return "Party not found"
         }
      }
+
+     updateVoteCount(name, votes) {
+        const filename = `${name}.json`;
+        if (this.fileExists(filename)) {
+            const filePath = path.join(baseDir, filename);
+            const fileContent = fs.readFileSync(filePath, 'utf-8');
+            const party = JSON.parse(fileContent);
+            party.votes = votes;
+            fs.writeFileSync(filePath, JSON.stringify(party));
+            return "Vote count updated successfully";
+        } else {
+            return "Party not found";
+        }
+    }
+
+    getLeaderboard() {
+        const parties = this.getAllParties();
+        return parties.sort((a, b) => b.votes - a.votes);
+    }
+
 }
 
 const politicalParties = new Parties()

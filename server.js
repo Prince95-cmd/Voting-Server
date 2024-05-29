@@ -44,10 +44,29 @@ const server = http.createServer((req, res) => {
         const result = voteParties.deleteOneParty(filename);
         res.end(result)
     }
-    // else if(req.method === 'GET' && req.url === '/update-count'){
+    else if (req.method === 'POST' && req.url === '/update-count') {
 
-    //     //Update count
-    // }
+        // Update vote count
+        let body = '';
+        req.on('data', (data) => {
+          body += data.toString();
+        });
+    
+        req.on('end', () => {
+          const result = JSON.parse(body);
+          const response = voteParties.updateVoteCount(result.name, result.votes);
+          res.writeHead(200, { "Content-Type": "text/plain" });
+          res.end(response);
+        });
+      }
+      else if (req.method === 'GET' && req.url === '/leaderboard') {
+
+        // Get leaderboard
+        const leaderboard = voteParties.getLeaderboard();
+        res.writeHead(200, { "Content-Type": "application/json" });
+        const stringJsn = JSON.stringify(leaderboard);
+        res.end(stringJsn);
+      }
     else{
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.end('Not Found');
